@@ -13,7 +13,7 @@ function archive_page( $post ) {
     <select name="archive_page">
         <option value="">Aucune</option>
         <?php
-            $post_types = get_post_types( array( 'show_ui' => true ) );
+            $post_types = get_post_types( array( 'show_ui' => true, '_builtin' => false ) );
             foreach( $post_types as $post_type )
                 echo '<option value="' . esc_attr( $post_type ) . '" ' . selected( $post_type, $archive_page, false ) . '>' . esc_html( $post_type ) . '</option>'; 
         ?>
