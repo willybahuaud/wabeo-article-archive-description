@@ -49,19 +49,22 @@ function my_save_post( $post_ID ){
 function presentation_archive() {
     $post_type_obj = get_queried_object();
     $target = $post_type_obj->name;
-    global $wpdb;
-    $presentation = $wpdb->get_var( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_archive_page' AND meta_value = '$target'" );
-    if( ! is_null( $presentation )  ) {
-        $presentation = new WP_Query( array(
-            'page_id' => $presentation
-            ) );
-        if( $presentation->have_posts() ) : $presentation->the_post();
-            the_title( '<h1 class="h1">', '</h1>' );
-            echo '<div class="article-elem">';
-            echo the_content();
-            echo '</div>';
-        endif;
-    }
+    $presentation = new WP_Query( array(
+        'post_type' => 'page',
+        'meta_query' => array(
+            array(
+                'key' => '_archive_page',
+                'value' => $target,
+                'compare' => '='
+                )
+            )
+        ) );
+    if( $presentation->have_posts() ) : $presentation->the_post();
+        the_title( '<h1 class="h1">', '</h1>' );
+        echo '<div class="article-elem">';
+        echo the_content();
+        echo '</div>';
+    endif;
 }
 
 // filtre permalien
