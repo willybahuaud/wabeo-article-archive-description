@@ -1,31 +1,30 @@
 <?php
 
-// filtre permalien
-add_filter( 'page_link', 'archive_permalink', 10, 2 );
-function archive_permalink( $lien, $id ) {
-    if( '' != ( $archive = get_post_meta( $id, '_archive_page', true ) ) && ! is_admin() )
-        return get_post_type_archive_link( $archive );
-    else
-        return $lien;
-}
-
-// redirect
-add_action( 'template_redirect', 'redirect_to_archive' );
-function redirect_to_archive() {
-    if( is_page() && ! is_admin() ){
-        global $post;
-        if( '' != ( $archive = get_post_meta( $post->ID, '_archive_page', true ) ) ) {
-            wp_redirect( get_post_type_archive_link( $archive ), 301 );
-            exit();
-        }
-    }
-}
-
+// ajout de la metabox
 add_action( 'admin_init', 'admin_init' );
 function admin_init(){
     add_meta_box("desc_page", "Archive à présenter", "archive_page", "page", "side", "high");
 }
 
+//fonction de la metabox
+function archive_page( $post ) {
+    $archive_page = get_post_meta( $post->ID, '_archive_page', true );
+    ?>
+    <select name="archive_page">
+        <option value="">Aucune</option>
+        <?php
+            $post_types = get_post_types( array( 'show_ui' => true ) );
+            foreach( $post_types as $post_type )
+                echo '<option value="' . esc_attr( $post_type ) . '" ' . selected( $post_type, $archive_page, false ) . '>' . esc_html( $post_type ) . '</option>'; 
+        ?>
+    </select>
+    <p>Choisissez la cible de cette page</p>
+    
+    <?php
+    wp_nonce_field( 'archive_page-save_' . $post->ID, 'archive_page-nonce') ;
+}
+
+//sauvegarde de la metabox
 function save_custom( $post_ID ){ 
     // on retourne rien du tout s'il s'agit d'une sauvegarde automatique
     if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
@@ -45,25 +44,6 @@ function save_custom( $post_ID ){
     }
 }
 
-function archive_page( $post ) {
-    $archive_page = get_post_meta( $post->ID,'_archive_page', true);
-    ?>
-    <select name="archive_page" id="">
-        <option value="">Aucune</option>
-        <?php
-            $ar = get_post_types(array('show_ui'=>true));
-            foreach( $ar as $a ) :
-        ?>
-        <option value="<?php echo $a; ?>" <?php selected($a,$archive_page); ?>><?php echo $a; ?></option> 
-        <?php endforeach; ?>
-    </select>
-    <p>Choisissez la cible de cette page</p>
-    
-    <?php
-    wp_nonce_field( 'archive_page-save_' . $post->ID, 'archive_page-nonce') ;
-
-}
-
 //présentation de l'archive
 function presentation_archive() {
     $post_type_obj = get_queried_object();
@@ -80,6 +60,27 @@ function presentation_archive() {
             echo the_content();
             echo '</div>';
         endif;
+    }
+}
+
+// filtre permalien
+add_filter( 'page_link', 'archive_permalink', 10, 2 );
+function archive_permalink( $lien, $id ) {
+    if( '' != ( $archive = get_post_meta( $id, '_archive_page', true ) ) && ! is_admin() )
+        return get_post_type_archive_link( $archive );
+    else
+        return $lien;
+}
+
+// redirect
+add_action( 'template_redirect', 'redirect_to_archive' );
+function redirect_to_archive() {
+    if( is_page() && ! is_admin() ){
+        global $post;
+        if( '' != ( $archive = get_post_meta( $post->ID, '_archive_page', true ) ) ) {
+            wp_redirect( get_post_type_archive_link( $archive ), 301 );
+            exit();
+        }
     }
 }
 
