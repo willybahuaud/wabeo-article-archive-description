@@ -65,7 +65,9 @@ function archive_page( $post ) {
 }
 
 //présentation de l'archive
-if( $target = get_post_type( $post ) ) {
+function presentation_archive() {
+    $post_type_obj = get_queried_object();
+    $target = $post_type_obj->name;
     global $wpdb;
     $presentation = $wpdb->get_var( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_archive_page' AND meta_value = '$target'" );
     if( ! is_null( $presentation)  ) {
