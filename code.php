@@ -1,8 +1,8 @@
 <?php
 
 // ajout de la metabox
-add_action( 'admin_init', 'admin_init' );
-function admin_init(){
+add_action( 'admin_init', 'my_admin_init' );
+function my_admin_init(){
     add_meta_box("desc_page", "Archive à présenter", "archive_page", "page", "side", "high");
 }
 
@@ -25,7 +25,8 @@ function archive_page( $post ) {
 }
 
 //sauvegarde de la metabox
-function save_custom( $post_ID ){ 
+add_action( 'save_post', 'my_save_post' ); 
+function my_save_post( $post_ID ){ 
     // on retourne rien du tout s'il s'agit d'une sauvegarde automatique
     if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
         return $post_id;
@@ -50,7 +51,7 @@ function presentation_archive() {
     $target = $post_type_obj->name;
     global $wpdb;
     $presentation = $wpdb->get_var( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_archive_page' AND meta_value = '$target'" );
-    if( ! is_null( $presentation)  ) {
+    if( ! is_null( $presentation )  ) {
         $presentation = new WP_Query( array(
             'page_id' => $presentation
             ) );
