@@ -80,3 +80,15 @@ if( $target = get_post_type( $post ) ) {
         endif;
     }
 }
+
+//filtre classes nav menu
+add_filter( 'nav_menu_css_class', 'my_add_menu_classes', 10 , 3 );
+function my_add_menu_classes( $classes , $item, $args ) {
+    if( '' != ( $archive = get_post_meta( $item->object_id, '_archive_page', true ) ) ) {
+        if( is_post_type_archive( $archive ) )
+            $classes[] = 'current-menu-item';
+        if( is_singular( $archive ) )
+            $classes[] = 'current-menu-ancestor';
+    }
+    return $classes;
+}
