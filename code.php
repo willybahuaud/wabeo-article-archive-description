@@ -82,8 +82,8 @@ if( $target = get_post_type( $post ) ) {
 }
 
 //filtre classes nav menu
-add_filter( 'nav_menu_css_class', 'my_add_menu_classes', 10 , 3 );
-function my_add_menu_classes( $classes , $item, $args ) {
+add_filter( 'nav_menu_css_class', 'add_my_archive_menu_classes', 10 , 3 );
+function add_my_archive_menu_classes( $classes , $item, $args ) {
     if( '' != ( $archive = get_post_meta( $item->object_id, '_archive_page', true ) ) ) {
         if( is_post_type_archive( $archive ) )
             $classes[] = 'current-menu-item';
