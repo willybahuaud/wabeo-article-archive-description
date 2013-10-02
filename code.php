@@ -29,7 +29,7 @@ add_action( 'save_post', 'my_save_post' );
 function my_save_post( $post_ID ){ 
     // on retourne rien du tout s'il s'agit d'une sauvegarde automatique
     if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
-        return $post_id;
+        return $post_ID;
         
     if ( isset( $_POST[ 'archive_page' ], $_POST[ 'post_ID' ] ) && ( $_post_ID = (int) $_POST[ 'post_ID' ] ) ) {
         check_admin_referer( 'archive_page-save_' . $_post_ID, 'archive_page-nonce' );
