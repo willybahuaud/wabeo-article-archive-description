@@ -37,7 +37,7 @@ function my_save_post( $post_ID ){
         if( isset( $_POST[ 'archive_page' ] ) ) {
             $target = $_POST[ 'archive_page' ];
             global $wpdb;
-            $suppr = $wpdb->get_results( "SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_archive_page' AND meta_value = '$target'" );
+            $suppr = $wpdb->get_results( $wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_archive_page' AND meta_value = '%s'"), $target );
             foreach( $suppr as $s )
                 delete_post_meta( $s->post_id, '_archive_page' );
             update_post_meta( $_POST[ 'post_ID' ], '_archive_page', $_POST[ 'archive_page' ] );
