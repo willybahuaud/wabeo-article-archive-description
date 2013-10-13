@@ -31,19 +31,19 @@ function my_save_post( $post_ID ){
     if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE )
         return $post_ID;
         
-    if ( isset( $_POST[ 'archive_page' ], $_POST[ 'post_ID' ] ) && ( $_post_ID = (int) $_POST[ 'post_ID' ] ) ) {
-        check_admin_referer( 'archive_page-save_' . $_post_ID, 'archive_page-nonce' );
- 
-        $_archive = sanitize_text_field( $_POST[ 'archive_page' ] );
-        delete_metadata( 'post', $_post_ID, '_archive_page', $_archive, true );
-        update_post_meta( $_post_ID, '_archive_page', $_archive );
+    if ( isset( $_POST[ 'archive_page' ] ) ) {
+        check_admin_referer( 'archive_page-save_' . $_POST[ 'post_ID' ], 'archive_page-nonce' );
+
+        if( isset( $_POST[ 'archive_page' ] ) ) {
+            $target = $_POST[ 'archive_page' ];
+            global $wpdb;
+            $suppr = $wpdb->get_results( $wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_archive_page' AND meta_value = '%s'"), $target );
+            foreach( $suppr as $s )
+                delete_post_meta( $s->post_id, '_archive_page' );
+            update_post_meta( $_POST[ 'post_ID' ], '_archive_page', $_POST[ 'archive_page' ] );
+        }
     }
 }
-
-
-
-
-
 
 //présentation de l'archive
 function presentation_archive() {
